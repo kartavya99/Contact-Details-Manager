@@ -41,7 +41,7 @@ namespace CDMTests
             CountryAddRequest? request = new CountryAddRequest() { CountryName = null };
 
             //Assert
-            Assert.Throws<ArgumentNullException>(() =>
+            Assert.Throws<ArgumentException>(() =>
             {
                 //Act
                 _countriesService.AddCountry(request);
@@ -58,7 +58,7 @@ namespace CDMTests
             CountryAddRequest? request2 = new CountryAddRequest() { CountryName = "AUS" };
 
             //Assert
-            Assert.Throws<ArgumentNullException>(() =>
+            Assert.Throws<ArgumentException>(() =>
             {
                 //Act
                 _countriesService.AddCountry(request1);
