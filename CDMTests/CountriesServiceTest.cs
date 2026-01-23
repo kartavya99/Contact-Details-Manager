@@ -81,8 +81,7 @@ namespace CDMTests
 
             //Assert
             Assert.True(response.CountryID != Guid.Empty);
-            Assert.Contains(response, countries_from_GetAllcountries);
-            
+            Assert.Contains(response, countries_from_GetAllcountries);            
         }
 
         #endregion
