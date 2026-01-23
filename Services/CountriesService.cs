@@ -5,13 +5,13 @@ using ServiceContracts.DTO;
 
 namespace Services
 {    
-    public class CounttriesService : ICountriesService
+    public class CountriesService : ICountriesService
     {
         //private field
         private readonly List<Country> _countries;
 
         //constructor
-        public CounttriesService()
+        public CountriesService()
         {
             _countries = new List<Country>();
         }
@@ -48,6 +48,11 @@ namespace Services
 
             return country.ToCountryResponse();
             
+        }
+
+        public List<CountryResponse> GetAllCountries()
+        {
+            throw new NotImplementedException();
         }
     }
 }
