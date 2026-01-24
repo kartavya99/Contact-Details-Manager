@@ -12,12 +12,12 @@ namespace CDMTests
     public class PersonsServiceTest
     {
         //private field
-        private readonly IPersonsService _personsService;
+        private readonly IPersonsService _personService;
         
         //constructor
         public PersonsServiceTest()
         {
-            _personsService = new PersonsService();
+            _personService = new PersonsService();
         }
 
         #region AddPerson
@@ -33,7 +33,7 @@ namespace CDMTests
             Assert.Throws<ArgumentNullException>(() =>
             {
                 //Act
-                _personsService.AddPerson(personAddRequest);
+                _personService.AddPerson(personAddRequest);
             });
 
         }
@@ -49,10 +49,8 @@ namespace CDMTests
             //Assert
             Assert.Throws<ArgumentException>(() =>
             {
-                //Act
-                _personsService.AddPerson(personAddRequest);
+                _personService.AddPerson(personAddRequest);
             });
-
         }
 
         // When we supply proper person details, it should insert the person into the person list; 
@@ -73,9 +71,9 @@ namespace CDMTests
             };
 
             //Act
-            PersonResponse person_response_from_add = _personsService.AddPerson(personAddRequest);
+            PersonResponse person_response_from_add = _personService.AddPerson(personAddRequest);
 
-            List<PersonResponse> persons_list = _personsService.GetAllPersons();
+            List<PersonResponse> persons_list = _personService.GetAllPersons();
 
             //Assert
             Assert.True(person_response_from_add.PersonID != Guid.Empty);
