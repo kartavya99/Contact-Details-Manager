@@ -21,7 +21,7 @@ namespace CDMTests
         public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
             _personService = new PersonsService();
-            _coutriesService = new CountriesService();
+            _coutriesService = new CountriesService(false);
             _testOutputHelper = testOutputHelper;
         }
 
