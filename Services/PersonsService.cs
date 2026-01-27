@@ -67,7 +67,7 @@ namespace Services
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _person.Select(temp => temp.ToPersonResponse()).ToList();    
+            return _person.Select(temp => ConvertPersonToPersonReponse(temp)).ToList();    
         }
 
         public PersonResponse? GetPersonByPersonID(Guid? personID)
@@ -77,7 +77,7 @@ namespace Services
             Person? person = _person.FirstOrDefault(temp => temp.PersonID == personID);
             if(person == null) return null;
 
-            return person.ToPersonResponse();
+            return ConvertPersonToPersonReponse(person);
         }
 
         public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
@@ -208,7 +208,7 @@ namespace Services
             matchingPerson.Address = personUpdateRequest.Address;
             matchingPerson.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
 
-            return matchingPerson.ToPersonResponse();
+            return ConvertPersonToPersonReponse(matchingPerson);
 
         }
 
