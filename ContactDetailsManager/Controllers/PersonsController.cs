@@ -6,6 +6,7 @@ using Services;
 
 namespace ContactDetailsManager.Controllers
 {
+    [Route("[controller]")]
     public class PersonsController : Controller
     {
 
@@ -20,8 +21,8 @@ namespace ContactDetailsManager.Controllers
             _countriesService = countriesService;
         }
 
-
-        [Route("persons/index")]
+        //Url: index
+        [Route("[action]")]
         [Route("/")]
         public IActionResult Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
@@ -48,8 +49,10 @@ namespace ContactDetailsManager.Controllers
             return View(sortedPersons); //Views/Persons/Index.cshtml;
         }
 
+
         //Executes when the user clicks on "Create Person" hyperlink (while opening the create view)
-        [Route("persons/create")]
+        //Url: persons/create
+        [Route("[action]")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -58,8 +61,9 @@ namespace ContactDetailsManager.Controllers
             return View();
         }
 
+        //Url: persons/create
         [HttpPost]
-        [Route("persons/create")]
+        [Route("[action]")]
         public IActionResult Create(PersonAddRequest personAddRequest)
         {
             if(!ModelState.IsValid)
