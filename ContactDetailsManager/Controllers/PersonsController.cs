@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -57,7 +58,12 @@ namespace ContactDetailsManager.Controllers
         public IActionResult Create()
         {
             List<CountryResponse> countries = _countriesService.GetAllCountries();
-            ViewBag.Countries = countries;
+            ViewBag.Countries = countries.Select(temp => new SelectListItem()
+            {
+                Text = temp.CountryName,
+                Value = temp.CountryID.ToString()
+            });
+
             return View();
         }
 
@@ -69,7 +75,11 @@ namespace ContactDetailsManager.Controllers
             if(!ModelState.IsValid)
             {
                 List<CountryResponse> countries = _countriesService.GetAllCountries();
-                ViewBag.Countries = countries;
+                ViewBag.Countries = countries.Select(temp => new SelectListItem()
+                {
+                    Text = temp.CountryName,
+                    Value = temp.CountryID.ToString()
+                });
 
                 ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
                 return View();
