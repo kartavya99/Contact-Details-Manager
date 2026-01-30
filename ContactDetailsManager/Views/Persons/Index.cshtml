@@ -104,7 +104,9 @@ ViewBag.Title = "Persons";
                     <td style="width:20%">
                         <a asp-controller="Persons" asp-action="Edit" asp-route-personID="@person.PersonID">Edit</a>
                         @* /Persons/Edit/1 *@
-                    </td>
+                        <a asp-controller="Persons" asp-action="Delete" asp-route-personID="@person.PersonID">Delete</a>
+                        @* /Persons/Edit/1 *@
+                    </td>                   
                 </tr>
             }
             <tr></tr>
