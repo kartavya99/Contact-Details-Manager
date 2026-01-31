@@ -6,6 +6,7 @@ using ServiceContracts.DTO;
 using Services;
 using ServiceContracts.Enums;
 using Xunit.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace CDMTests
@@ -20,8 +21,8 @@ namespace CDMTests
         //constructor
         public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
-            _personService = new PersonsService();
-            _coutriesService = new CountriesService(false);
+            _coutriesService = new CountriesService(new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options));
+            _personService = new PersonsService(new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options), _coutriesService);
             _testOutputHelper = testOutputHelper;
         }
 
