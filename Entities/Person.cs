@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities
 {
@@ -12,6 +13,7 @@ namespace Entities
         public Guid PersonID { get; set; }
 
         [StringLength(40)] //nvarchar(40)
+
         public string? PersonName { get; set; }
 
         [StringLength(40)] //nvarchar(40)
@@ -32,5 +34,8 @@ namespace Entities
         public bool ReceiveNewsLetters { get; set; }
 
         public string? TIN {  get; set; }
+
+        [ForeignKey("CountryID")]
+        public Country? Country { get; set; }
     }
 }
