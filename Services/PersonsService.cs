@@ -18,7 +18,9 @@ namespace Services
     {
         //private field
         private readonly PersonsDbContext _db;
-        private readonly ICountriesService _countriesService;
+        private readonly ICountriesService _countriesService;      
+        
+        
 
         //Constructor
         public PersonsService(PersonsDbContext personsDbContext, ICountriesService countriesService)
@@ -276,9 +278,11 @@ namespace Services
             return newMemoryStream;
         }
 
+        
         public async Task<MemoryStream> GetPersonsExcel()
-        {
+        {           
             MemoryStream memoryStream = new MemoryStream();
+            ExcelPackage.License.SetNonCommercialPersonal("zebon");
             using (ExcelPackage excelPackage = new ExcelPackage(memoryStream))
             {
                 ExcelWorksheet workSheet = excelPackage.Workbook.Worksheets.Add("PersonsSheet");
