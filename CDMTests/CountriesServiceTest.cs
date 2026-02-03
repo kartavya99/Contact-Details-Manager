@@ -6,6 +6,8 @@ using Entities;
 using Services;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using EntityFrameworkCoreMock;
+using Moq;
 
 
 namespace CDMTests
@@ -17,7 +19,16 @@ namespace CDMTests
         //constructor
         public CountriesServiceTest()
         {
-            _countriesService = new CountriesService(new PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options));
+            var countriesInititalData = new List<Country>() { };
+            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
+                    new DbContextOptionsBuilder<ApplicationDbContext>().Options
+                );
+
+            ApplicationDbContext dbContext = dbContextMock.Object;
+            dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInititalData);
+
+            _countriesService = new CountriesService(dbContext);
+            
         }
 
         #region AddCountry
