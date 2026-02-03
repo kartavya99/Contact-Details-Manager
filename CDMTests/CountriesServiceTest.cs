@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using EntityFrameworkCoreMock;
 using Moq;
 using AutoFixture;
+using FluentAssertions;
 
 
 namespace CDMTests
@@ -43,12 +44,13 @@ namespace CDMTests
             //Arrang
             CountryAddRequest? request = null;
 
-            //Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            //Act
+            var action = async () =>
             {
-                //Act
-                await _countriesService.AddCountry(request);
-            });
+               await _countriesService.AddCountry(request);
+            };
+            //Assert
+            await action.Should().ThrowAsync<ArgumentNullException>();
         }
 
 
@@ -60,12 +62,13 @@ namespace CDMTests
             //Arrang
             CountryAddRequest? request = _fixture.Build<CountryAddRequest>().With(temp => temp.CountryName, null as string).Create();
 
-            //Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            //Act
+            var action = async () =>
             {
-                //Act
-               await _countriesService.AddCountry(request);
-            });
+                await _countriesService.AddCountry(request);
+            };
+            //Assert
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
 
@@ -77,13 +80,14 @@ namespace CDMTests
             CountryAddRequest? request1 = _fixture.Create<CountryAddRequest>();
             CountryAddRequest? request2 = _fixture.Build<CountryAddRequest>().With(temp => temp.CountryName, request1.CountryName).Create();
 
-            //Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            //Act
+            var action = async () =>
             {
-                //Act
                 await _countriesService.AddCountry(request1);
                 await _countriesService.AddCountry(request2);
-            });
+            };
+            //Asert
+            await action.Should().ThrowAsync<ArgumentException>();
         }
 
         //when you supply proper coutry name, it should inset (add) the country to the existing list of coutries
@@ -99,7 +103,8 @@ namespace CDMTests
 
             //Assert
             Assert.True(response.CountryID != Guid.Empty);
-            Assert.Contains(response, countries_from_GetAllcountries);            
+            //Assert.Contains(response, countries_from_GetAllcountries);            
+            countries_from_GetAllcountries.Should().Contain(response);
         }
 
         #endregion
@@ -115,7 +120,8 @@ namespace CDMTests
             List<CountryResponse> actual_country_response_list = await _countriesService.GetAllCountries();
 
             //Assert
-            Assert.Empty(actual_country_response_list);
+            //Assert.Empty(actual_country_response_list);
+            actual_country_response_list.Should().BeEmpty();
         }
 
         [Fact]
@@ -138,11 +144,14 @@ namespace CDMTests
 
             List<CountryResponse> actualCountryResponseList = await _countriesService.GetAllCountries();
 
-            //read each element from countries list_from_add_cotuntry
-            foreach (CountryResponse expected_country in countries_list_from_add_country)
-            {
-                Assert.Contains(expected_country, actualCountryResponseList);
-            }
+            ////read each element from countries list_from_add_cotuntry
+            //foreach (CountryResponse expected_country in countries_list_from_add_country)
+            //{
+            //    Assert.Contains(expected_country, actualCountryResponseList);
+            //}
+
+            //Assert
+            actualCountryResponseList.Should().BeEquivalentTo(countries_list_from_add_country);
         }
 
         #endregion
@@ -160,7 +169,8 @@ namespace CDMTests
             CountryResponse? country_response_from_get_method = await _countriesService.GetCountryByCountryID(countryID);
 
             //Assert
-            Assert.Null(country_response_from_get_method);
+            //Assert.Null(country_response_from_get_method);
+            country_response_from_get_method.Should().BeNull(); 
         }
 
         [Fact]
@@ -175,7 +185,8 @@ namespace CDMTests
             CountryResponse? country_response_from_get = await _countriesService.GetCountryByCountryID(country_response_from_add.CountryID);
 
             //Assert
-            Assert.Equal(country_response_from_add, country_response_from_get);
+            // Assert.Equal(country_response_from_add, country_response_from_get);
+            country_response_from_get.Should().Be(country_response_from_add);
         }
         #endregion
     }
