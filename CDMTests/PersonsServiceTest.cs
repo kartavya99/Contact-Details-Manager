@@ -39,8 +39,8 @@ namespace CDMTests
             dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInititalData);
             dbContextMock.CreateDbSetMock(temp => temp.Persons, personsInititalData);
 
-            _coutriesService = new CountriesService(dbContext);           
-            _personService = new PersonsService(dbContext, _coutriesService);
+            _coutriesService = new CountriesService(null);           
+            _personService = new PersonsService(null);
             _testOutputHelper = testOutputHelper;
         }
 

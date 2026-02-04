@@ -2,12 +2,17 @@ using ServiceContracts;
 using Services;
 using Microsoft.EntityFrameworkCore;
 using Entities;
+using RepositoryContarcts;
+using Respostiories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
 //add services into IoC container
+builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
+builder.Services.AddScoped<IpersonsRepository, PersonsRepository>();
+
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IPersonsService, PersonsService>();
 

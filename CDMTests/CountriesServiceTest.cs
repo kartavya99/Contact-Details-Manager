@@ -32,7 +32,7 @@ namespace CDMTests
             ApplicationDbContext dbContext = dbContextMock.Object;
             dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInititalData);
 
-            _countriesService = new CountriesService(dbContext);
+            _countriesService = new CountriesService(null);
             
         }
 
