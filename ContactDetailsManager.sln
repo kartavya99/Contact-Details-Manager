@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RepositoryContarcts", "RepositoryContarcts\RepositoryContarcts.csproj", "{E24FA21B-5AA7-4D8E-9F2C-49E66ED57BF9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Respostiories", "Respostiories\Respostiories.csproj", "{C8C313C2-D621-4336-AD84-BD9FC66F7616}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{E24FA21B-5AA7-4D8E-9F2C-49E66ED57BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E24FA21B-5AA7-4D8E-9F2C-49E66ED57BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E24FA21B-5AA7-4D8E-9F2C-49E66ED57BF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8C313C2-D621-4336-AD84-BD9FC66F7616}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8C313C2-D621-4336-AD84-BD9FC66F7616}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8C313C2-D621-4336-AD84-BD9FC66F7616}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8C313C2-D621-4336-AD84-BD9FC66F7616}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

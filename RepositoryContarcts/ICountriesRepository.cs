@@ -19,20 +19,20 @@ namespace RepositoryContarcts
         /// </summary>
         /// <param name="country"></param>
         /// <returns>Returns all countries from the table</returns>
-        Task<Country> GetAllCountry();
+        Task<List<Country>> GetAllCountry();
 
         /// <summary>
         /// Returns a country object based on teh given country id, otherwise, it returns null
         /// </summary>
         /// <param name="country">CountryID to search</param>
         /// <returns>Matching country or null</returns>
-        Task<Country> GetCountryByCountryId(Country CountryID);
+        Task<Country?> GetCountryByCountryId(Guid countryID);
 
         /// <summary>
         /// Returns a country object based on the given coutnry name
         /// </summary>
         /// <param name="countryName">Country Name to search</param>
         /// <returns>Matchingcountry or null</returns>
-        Task<Country> GetCountryByCountryName(Country countryName);
+        Task<Country?> GetCountryByCountryName(string countryName);
     }
 }
