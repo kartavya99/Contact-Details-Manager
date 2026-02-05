@@ -36,7 +36,7 @@ namespace ServiceContracts.DTO
         /// Converts the current object of PersonAddRequest into a new object of Person type
         /// </summary>
         /// <returns></returns>
-        public Person Toperson()
+        public Person ToPerson()
         {
             return new Person()
             {

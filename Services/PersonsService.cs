@@ -41,7 +41,7 @@ namespace Services
             ValidationHelper.ModelValidation(personAddRequest);
 
             //Convert personAddRequest into Person type
-            Person person = personAddRequest.Toperson();
+            Person person = personAddRequest.ToPerson();
 
             // generate PersonID
             person.PersonID = Guid.NewGuid();
