@@ -20,7 +20,7 @@ namespace Respostiories
             return country;
         }
 
-        public async Task<List<Country>> GetAllCountry()
+        public async Task<List<Country>> GetAllCountries()
         {
             return await _db.Countries.ToListAsync();
         }

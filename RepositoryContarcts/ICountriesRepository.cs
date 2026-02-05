@@ -19,7 +19,7 @@ namespace RepositoryContarcts
         /// </summary>
         /// <param name="country"></param>
         /// <returns>Returns all countries from the table</returns>
-        Task<List<Country>> GetAllCountry();
+        Task<List<Country>> GetAllCountries();
 
         /// <summary>
         /// Returns a country object based on teh given country id, otherwise, it returns null
