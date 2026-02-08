@@ -1,11 +1,14 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
+using ContactDetailsManager.Controllers;
 using Entities;
 using EntityFrameworkCoreMock;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Moq;
 using RepositoryContarcts;
+using Serilog;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -25,7 +28,7 @@ namespace CDMTests
         private readonly IPersonsService _personService;        
 
         private readonly Mock<IpersonsRepository> _personsRepositoryMock;
-        private readonly IpersonsRepository _peronsRepository;
+        private readonly IpersonsRepository _peronsRepository;        
 
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly IFixture _fixture;
@@ -35,9 +38,12 @@ namespace CDMTests
         {
             _fixture = new Fixture();
             _personsRepositoryMock = new Mock<IpersonsRepository>();
-            _peronsRepository = _personsRepositoryMock.Object;                    
+            _peronsRepository = _personsRepositoryMock.Object;
+            var diagnosticContextMock = new Mock<IDiagnosticContext>();
+            var loggerMock = new Mock<ILogger<PersonsService>>();
+            
 
-            _personService = new PersonsService(_peronsRepository);
+            _personService = new PersonsService(_peronsRepository, loggerMock.Object ,diagnosticContextMock.Object);
 
             _testOutputHelper = testOutputHelper;
         }

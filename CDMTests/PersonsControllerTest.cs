@@ -1,16 +1,18 @@
 ﻿using AutoFixture;
+using ContactDetailsManager.Controllers;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ServiceContracts;
+using ServiceContracts.DTO;
+using ServiceContracts.Enums;
+using Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FluentAssertions;
-using ContactDetailsManager.Controllers;
-using ServiceContracts.DTO;
-using ServiceContracts.Enums;
-using Microsoft.AspNetCore.Mvc;
 
 
 namespace CDMTests
@@ -18,22 +20,27 @@ namespace CDMTests
     public class PersonsControllerTest
     {
         private readonly ICountriesService _countriesServie;
-        private readonly IPersonsService _personsService;
+        private readonly IPersonsService _personsService;        
 
         private readonly Mock<ICountriesService> _countiresServiceMock;
         private readonly Mock<IPersonsService> _personsServiceMock;
 
         private readonly Fixture _fixture;
+        private readonly Mock<ILogger<PersonsController>> _loggerMock;
+        
 
         public PersonsControllerTest()
         {
             _fixture = new Fixture();
 
             _countiresServiceMock = new Mock<ICountriesService>();
-            _personsServiceMock = new Mock<IPersonsService>();
+            _personsServiceMock = new Mock<IPersonsService>();            
 
             _countriesServie = _countiresServiceMock.Object;
             _personsService = _personsServiceMock.Object;
+
+            _loggerMock = new Mock<ILogger<PersonsController>>();
+            
         }
 
         #region Index
@@ -44,7 +51,7 @@ namespace CDMTests
             //Arrange
             List<PersonResponse> persons_response_list = _fixture.Create<List<PersonResponse>>();
 
-            PersonsController personsController = new PersonsController(_personsService, _countriesServie);
+            PersonsController personsController = new PersonsController(_personsService, _countriesServie, _loggerMock.Object);
 
             _personsServiceMock.Setup(temp => temp.GetFilteredPersons(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(persons_response_list);
 
@@ -79,7 +86,7 @@ namespace CDMTests
 
             _personsServiceMock.Setup(temp => temp.AddPerson(It.IsAny<PersonAddRequest>())).ReturnsAsync(person_response);
 
-            PersonsController personsController = new PersonsController(_personsService, _countriesServie);
+            PersonsController personsController = new PersonsController(_personsService, _countriesServie, _loggerMock.Object);
 
             //Act
             personsController.ModelState.AddModelError("PersonName", "Person Name can't be blank");
@@ -108,7 +115,7 @@ namespace CDMTests
 
             _personsServiceMock.Setup(temp => temp.AddPerson(It.IsAny<PersonAddRequest>())).ReturnsAsync(person_response);
 
-            PersonsController personsController = new PersonsController(_personsService, _countriesServie);
+            PersonsController personsController = new PersonsController(_personsService, _countriesServie, _loggerMock.Object);
 
             //Act            
 

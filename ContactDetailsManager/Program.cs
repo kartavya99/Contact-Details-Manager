@@ -4,8 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using Entities;
 using RepositoryContarcts;
 using Respostiories;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Serilog
+builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
+{
+    loggerConfiguration
+    .ReadFrom.Configuration(context.Configuration) // read configuration seeting from built-in IConfiguration
+    .ReadFrom.Services(services); // read out current app's services and make them aviailable to serilog
+});
+
+
 builder.Services.AddControllersWithViews();
 
 
@@ -25,14 +36,30 @@ if (!builder.Environment.IsEnvironment("Test"))
 
 // Data Source=(localdb)\ProjectModels;Initial Catalog=PersonsDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
 
+builder.Services.AddHttpLogging(options => {
+    options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | 
+                            Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
+});
+
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 if (builder.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
 
-if(builder.Environment.IsEnvironment("Test") == false)
+app.UseHttpLogging();
+
+//app.Logger.LogDebug("debug-message");
+//app.Logger.LogInformation("information-message");
+//app.Logger.LogWarning("warning-message");
+//app.Logger.LogError("error-message");
+//app.Logger.LogCritical("critical-message");
+
+
+if (builder.Environment.IsEnvironment("Test") == false)
     Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
 
 
