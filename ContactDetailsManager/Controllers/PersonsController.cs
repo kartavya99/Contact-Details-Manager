@@ -10,6 +10,7 @@ using Services;
 namespace ContactDetailsManager.Controllers
 {
     [Route("[controller]")]
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller" })]
     public class PersonsController : Controller
     {
 
@@ -30,7 +31,8 @@ namespace ContactDetailsManager.Controllers
         //Url: index
         [Route("[action]")]
         [Route("/")]
-        [TypeFilter(typeof(PersonsListActionsFilter))]
+        [TypeFilter(typeof(PersonsListActionFilter))]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "MyKey-FromAction", "MyValue-FromAction" })]
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
              _logger.LogInformation("Index action method of PersonsController");
@@ -38,24 +40,24 @@ namespace ContactDetailsManager.Controllers
              _logger.LogDebug($"searchBy: {searchBy}, searchString: {searchString}, sortBy: {sortBy}, sortOrder: {sortOrder}");
 
             //Searching
-            ViewBag.SearchFields = new Dictionary<string, string>()
-            {
-                {nameof(PersonResponse.PersonName), "Person Name" },
-                {nameof(PersonResponse.Email), "Eamil" },
-                {nameof(PersonResponse.DateOfBirth), "Date of Birth" },
-                {nameof(PersonResponse.Gender), "Gender" },
-                {nameof(PersonResponse.CountryID), "Country" },
-                {nameof(PersonResponse.Address), "Address" }
-            };
+            //ViewBag.SearchFields = new Dictionary<string, string>()
+            //{
+            //    {nameof(PersonResponse.PersonName), "Person Name" },
+            //    {nameof(PersonResponse.Email), "Eamil" },
+            //    {nameof(PersonResponse.DateOfBirth), "Date of Birth" },
+            //    {nameof(PersonResponse.Gender), "Gender" },
+            //    {nameof(PersonResponse.CountryID), "Country" },
+            //    {nameof(PersonResponse.Address), "Address" }
+            //};
 
             List<PersonResponse> persons = await _personsService.GetFilteredPersons(searchBy, searchString);
-            ViewBag.CurrentSearchBy = searchBy;
-            ViewBag.CurrentSearchString = searchString;
+            // ViewBag.CurrentSearchBy = searchBy;
+            // ViewBag.CurrentSearchString = searchString;
 
             //Sort
             List<PersonResponse> sortedPersons = await _personsService.GetSortedPersons(persons, sortBy, sortOrder);
-            ViewBag.CurrentSortBy = sortBy;
-            ViewBag.CurrentSortOrder = sortOrder.ToString();
+            // ViewBag.CurrentSortBy = sortBy;
+            // ViewBag.CurrentSortOrder = sortOrder.ToString();
 
             return View(sortedPersons); //Views/Persons/Index.cshtml;
         }
@@ -65,6 +67,8 @@ namespace ContactDetailsManager.Controllers
         //Url: persons/create
         [Route("[action]")]
         [HttpGet]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "my-key", "my-value" })]
+
         public async Task<IActionResult> Create()
         {
             List<CountryResponse> countries = await _countriesService.GetAllCountries();
