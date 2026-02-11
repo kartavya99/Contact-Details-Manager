@@ -1,4 +1,6 @@
 ﻿using ContactDetailsManager.Filters.ActionFilters;
+using ContactDetailsManager.Filters.ResourceFilters;
+using ContactDetailsManager.Filters.ResultFilters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Rotativa.AspNetCore;
@@ -33,6 +35,8 @@ namespace ContactDetailsManager.Controllers
         [Route("/")]
         [TypeFilter(typeof(PersonsListActionFilter), Order = 4)]
         [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "MyKey-FromAction", "MyValue-FromAction", 1 }, Order = 1 )]
+
+        [TypeFilter(typeof(PersonsListResultFilter))]
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
              _logger.LogInformation("Index action method of PersonsController");
@@ -54,8 +58,7 @@ namespace ContactDetailsManager.Controllers
         //Url: persons/create
         [Route("[action]")]
         [HttpGet]
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "my-key", "my-value", 4 })]
-
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "my-key", "my-value", 4 })]      
         public async Task<IActionResult> Create()
         {
             List<CountryResponse> countries = await _countriesService.GetAllCountries();
@@ -72,6 +75,7 @@ namespace ContactDetailsManager.Controllers
         [HttpPost]
         [Route("[action]")]
         [TypeFilter(typeof(PersonCreateAndEditPostActionFilter))]
+        [TypeFilter(typeof(FeatureDisabledResourceFilter), Arguments = new object[] { false})]
         public async Task<IActionResult> Create(PersonAddRequest personRequest)
         {
             //call the servie method
