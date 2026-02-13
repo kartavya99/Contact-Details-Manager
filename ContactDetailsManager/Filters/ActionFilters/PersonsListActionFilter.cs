@@ -22,7 +22,7 @@ namespace ContactDetailsManager.Filters.ActionFilters
 
             IDictionary<string, object?>? parameters = (IDictionary<string, object?>?) context.HttpContext.Items["arguments"];
 
-            if(parameters != null)
+            if (parameters != null)
             {
                 if (parameters.ContainsKey("searchBy"))
                 {
@@ -74,7 +74,7 @@ namespace ContactDetailsManager.Filters.ActionFilters
                 string? searchBy = Convert.ToString(context.ActionArguments["searchBy"]);
 
                 //Validate the searchBy parameter value
-                if(!string.IsNullOrEmpty(searchBy))
+                if (!string.IsNullOrEmpty(searchBy))
                 {
                     var searchByOptions = new List<string>()
                     {

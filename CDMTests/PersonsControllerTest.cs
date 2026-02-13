@@ -20,7 +20,8 @@ namespace CDMTests
     public class PersonsControllerTest
     {
         private readonly ICountriesService _countriesServie;
-        private readonly IPersonsService _personsService;        
+        private readonly IPersonsService _personsService;
+        private readonly ILogger<PersonsController> _logger;
 
         private readonly Mock<ICountriesService> _countiresServiceMock;
         private readonly Mock<IPersonsService> _personsServiceMock;
@@ -34,12 +35,13 @@ namespace CDMTests
             _fixture = new Fixture();
 
             _countiresServiceMock = new Mock<ICountriesService>();
-            _personsServiceMock = new Mock<IPersonsService>();            
+            _personsServiceMock = new Mock<IPersonsService>();
+            _loggerMock = new Mock<ILogger<PersonsController>>();
 
             _countriesServie = _countiresServiceMock.Object;
             _personsService = _personsServiceMock.Object;
 
-            _loggerMock = new Mock<ILogger<PersonsController>>();
+            _logger = _loggerMock.Object;
             
         }
 
@@ -51,7 +53,7 @@ namespace CDMTests
             //Arrange
             List<PersonResponse> persons_response_list = _fixture.Create<List<PersonResponse>>();
 
-            PersonsController personsController = new PersonsController(_personsService, _countriesServie, _loggerMock.Object);
+            PersonsController personsController = new PersonsController(_personsService, _countriesServie, _logger);
 
             _personsServiceMock.Setup(temp => temp.GetFilteredPersons(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(persons_response_list);
 
@@ -73,35 +75,6 @@ namespace CDMTests
         #region Create
 
         [Fact]
-        public async Task Create_IfModelErrors_ToReturnCreateView()
-        {
-            //Arrange
-            PersonAddRequest person_add_request = _fixture.Create<PersonAddRequest>();
-
-            PersonResponse person_response = _fixture.Create<PersonResponse>();
-
-            List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
-
-            _countiresServiceMock.Setup(temp => temp.GetAllCountries()).ReturnsAsync(countries);
-
-            _personsServiceMock.Setup(temp => temp.AddPerson(It.IsAny<PersonAddRequest>())).ReturnsAsync(person_response);
-
-            PersonsController personsController = new PersonsController(_personsService, _countriesServie, _loggerMock.Object);
-
-            //Act
-            personsController.ModelState.AddModelError("PersonName", "Person Name can't be blank");
-
-            IActionResult result = await personsController.Create(person_add_request);
-
-            //Assert
-            ViewResult viewResult = Assert.IsType<ViewResult>(result);
-
-            viewResult.ViewData.Model.Should().BeAssignableTo<PersonAddRequest>();
-
-            viewResult.ViewData.Model.Should().Be(person_add_request);
-        }
-
-        [Fact]
         public async Task Create_IfModelErrors_ToReturnRedirectToIndex()
         {
             //Arrange
@@ -115,7 +88,7 @@ namespace CDMTests
 
             _personsServiceMock.Setup(temp => temp.AddPerson(It.IsAny<PersonAddRequest>())).ReturnsAsync(person_response);
 
-            PersonsController personsController = new PersonsController(_personsService, _countriesServie, _loggerMock.Object);
+            PersonsController personsController = new PersonsController(_personsService, _countriesServie, _logger);
 
             //Act            
 

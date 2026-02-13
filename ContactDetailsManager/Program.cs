@@ -6,6 +6,7 @@ using RepositoryContarcts;
 using Respostiories;
 using Serilog;
 using ContactDetailsManager.Filters.ActionFilters;
+using ContactDetailsManager;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,44 +18,8 @@ builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, 
     .ReadFrom.Services(services); // read out current app's services and make them aviailable to serilog
 });
 
-builder.Services.AddTransient<ResponseHeaderActionFilter>();
+builder.Services.ConfigureServices(builder.Configuration, builder.Environment);
 
-//it adds controllers and views as services
-builder.Services.AddControllersWithViews(options =>
-{
-    // options.Filters.Add<ResponseHeaderActionFilter>();
-
-    var logger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<ResponseHeaderActionFilter>>();
-
-    options.Filters.Add(new ResponseHeaderActionFilter(logger)
-    {
-        Key = "My-Key-From-Global",
-        Value = "My-Value-From-Global",
-        Order = 2
-    });    
-});
-
-
-//add services into IoC container
-builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
-builder.Services.AddScoped<IpersonsRepository, PersonsRepository>();
-
-builder.Services.AddScoped<ICountriesService, CountriesService>();
-builder.Services.AddScoped<IPersonsService, PersonsService>();
-
-if (!builder.Environment.IsEnvironment("Test"))
-{
-    builder.Services.AddDbContext<ApplicationDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-}
-
-
-// Data Source=(localdb)\ProjectModels;Initial Catalog=PersonsDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
-
-builder.Services.AddHttpLogging(options => {
-    options.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestProperties | 
-                            Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.ResponsePropertiesAndHeaders;
-});
 
 var app = builder.Build();
 
