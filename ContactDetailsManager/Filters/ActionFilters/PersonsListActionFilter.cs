@@ -1,6 +1,7 @@
 ﻿using ContactDetailsManager.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceContracts.DTO;
+using ServiceContracts.Enums;
 
 namespace ContactDetailsManager.Filters.ActionFilters
 {
@@ -19,39 +20,47 @@ namespace ContactDetailsManager.Filters.ActionFilters
 
             PersonsController personsController = (PersonsController)context.Controller;
 
-            IDictionary<string, object>? parameters = (IDictionary<string, object>?) context.HttpContext.Items["arguments"];
+            IDictionary<string, object?>? parameters = (IDictionary<string, object?>?) context.HttpContext.Items["arguments"];
 
             if(parameters != null)
             {
                 if (parameters.ContainsKey("searchBy"))
                 {
-                    personsController.ViewData["CurrentsearchBy"] = Convert.ToString(parameters["searchBy"]);
+                    personsController.ViewData["CurrentSearchBy"] = Convert.ToString(parameters["searchBy"]);
                 }
 
                 if (parameters.ContainsKey("searchString"))
                 {
-                    personsController.ViewData["CurrentsearchString"] = Convert.ToString(parameters["searchString"]);
+                    personsController.ViewData["CurrentSearchString"] = Convert.ToString(parameters["searchString"]);
                 }
 
                 if (parameters.ContainsKey("sortBy"))
                 {
                     personsController.ViewData["CurrentSortBy"] = Convert.ToString(parameters["sortBy"]);
                 }
+                else
+                {
+                    personsController.ViewData["CurrentSortBy"] = nameof(PersonResponse.PersonName);
+                }
 
                 if (parameters.ContainsKey("sortOrder"))
                 {
                     personsController.ViewData["CurrentSortOrder"] = Convert.ToString(parameters["sortOrder"]);
                 }
+                else
+                {
+                    personsController.ViewData["CurrentSortOrder"] = nameof(SortOrderOptions.ASC);
+                }
             }
 
             personsController.ViewBag.SearchFields = new Dictionary<string, string>()
             {
-                {nameof(PersonResponse.PersonName), "Person Name" },
-                {nameof(PersonResponse.Email), "Eamil" },
-                {nameof(PersonResponse.DateOfBirth), "Date of Birth" },
-                {nameof(PersonResponse.Gender), "Gender" },
-                {nameof(PersonResponse.CountryID), "Country" },
-                {nameof(PersonResponse.Address), "Address" }
+                { nameof(PersonResponse.PersonName), "Person Name" },
+                { nameof(PersonResponse.Email), "Email" },
+                { nameof(PersonResponse.DateOfBirth), "Date of Birth" },
+                { nameof(PersonResponse.Gender), "Gender" },
+                { nameof(PersonResponse.CountryID), "Country" },
+                { nameof(PersonResponse.Address), "Address" }
             };
         }
 

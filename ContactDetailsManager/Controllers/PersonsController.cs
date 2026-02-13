@@ -1,4 +1,5 @@
-﻿using ContactDetailsManager.Filters.ActionFilters;
+﻿using ContactDetailsManager.Filters;
+using ContactDetailsManager.Filters.ActionFilters;
 using ContactDetailsManager.Filters.AuthorizationFIlter;
 using ContactDetailsManager.Filters.ExceptionFIlter;
 using ContactDetailsManager.Filters.ResourceFilters;
@@ -14,8 +15,11 @@ using Services;
 namespace ContactDetailsManager.Controllers
 {
     [Route("[controller]")]
-    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller", 3 }, Order = 3 )]
+    // [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "My-Key-From-Controller", "My-Value-From-Controller", 3 }, Order = 3 )]
+    [ResponseHeaderFilterFactory("My-Key-From-Controller", "My-Value-From-Controller", 3)]
     [TypeFilter(typeof(HandleExceptionFilter))]
+    [TypeFilter(typeof(PersonAlwaysRunResultFilter))]    
+
     public class PersonsController : Controller
     {
 
@@ -33,13 +37,16 @@ namespace ContactDetailsManager.Controllers
             
         }
 
-        //Url: index
+        //Url: persons/index
         [Route("[action]")]
         [Route("/")]
         [TypeFilter(typeof(PersonsListActionFilter), Order = 4)]
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "MyKey-FromAction", "MyValue-FromAction", 1 }, Order = 1 )]
+        //[TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "MyKey-FromAction", "MyValue-FromAction", 1 }, Order = 1 )]
+        [ResponseHeaderFilterFactory("MyKey-FromAction", "MyValue-FromAction", 1 )]
 
-        [TypeFilter(typeof(PersonsListResultFilter))]
+        [TypeFilter(typeof(PersonsListResultFilter))]        
+        [SkipFilter]
+
         public async Task<IActionResult> Index(string searchBy, string? searchString, string sortBy = nameof(PersonResponse.PersonName), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
              _logger.LogInformation("Index action method of PersonsController");
@@ -61,7 +68,7 @@ namespace ContactDetailsManager.Controllers
         //Url: persons/create
         [Route("[action]")]
         [HttpGet]
-        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = new object[] { "my-key", "my-value", 4 })]      
+        [ResponseHeaderFilterFactory("my-key", "my-value", 4)]      
         public async Task<IActionResult> Create()
         {
             List<CountryResponse> countries = await _countriesService.GetAllCountries();
