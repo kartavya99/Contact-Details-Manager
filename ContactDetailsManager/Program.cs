@@ -7,6 +7,7 @@ using Respostiories;
 using Serilog;
 using ContactDetailsManager.Filters.ActionFilters;
 using ContactDetailsManager;
+using ContactDetailsManager.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,11 @@ app.UseSerilogRequestLogging();
 if (builder.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+} 
+else
+{
+    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandlingMiddleware();
 }
 
 app.UseHttpLogging();
