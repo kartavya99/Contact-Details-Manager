@@ -7,9 +7,10 @@ namespace ContactDetailsManager.Controllers
     public class CountriesController : Controller
     {
 
-        private readonly ICountriesService _coutriesService;
+        private readonly ICountriesGetterService _coutriesService;
+        private readonly ICountriesUploaderService _countriesUploaderService;
 
-        public CountriesController(ICountriesService countriesService)
+        public CountriesController(ICountriesGetterService countriesService)
         {
             _coutriesService = countriesService;
         }
@@ -36,7 +37,7 @@ namespace ContactDetailsManager.Controllers
                 return View();
             }
 
-            int countriesCountInserted = await _coutriesService.UploadCountriesFromExcelFile(excelFile);
+            int countriesCountInserted = await _countriesUploaderService.UploadCountriesFromExcelFile(excelFile);
 
             ViewBag.Message = $"{countriesCountInserted} Countries uploaded";
             return View();
