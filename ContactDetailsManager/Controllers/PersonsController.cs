@@ -35,7 +35,7 @@ namespace ContactDetailsManager.Controllers
         private readonly ILogger<PersonsController> _logger;
 
         //constructor
-        public PersonsController(PersonsGetterService personsGetterService, IPersonsAdderService personsAdderService, IPersonsDeleterService personsDeleterService, IPersonsUpdaterService personsUpdaterService, IPersonsSorterService personsSorterService, ICountriesService countriesService, ILogger<PersonsController> logger)
+        public PersonsController(IPersonsGetterService personsGetterService, IPersonsAdderService personsAdderService, IPersonsDeleterService personsDeleterService, IPersonsUpdaterService personsUpdaterService, IPersonsSorterService personsSorterService, ICountriesService countriesService, ILogger<PersonsController> logger)
         {
             _personsGetterService = personsGetterService;
             _personsAdderService = personsAdderService;

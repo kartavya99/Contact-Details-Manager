@@ -1,13 +1,10 @@
 ﻿using AutoFixture;
-using AutoFixture.Kernel;
-using ContactDetailsManager.Controllers;
 using Entities;
-using EntityFrameworkCoreMock;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using RepositoryContarcts;
+using Respostiories;
 using Serilog;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -25,10 +22,14 @@ namespace CDMTests
     public class PersonsServiceTest
     {
         //private field
-        private readonly IPersonsGetterService _personService;        
+        private readonly IPersonsGetterService _personsGetterService;
+        private readonly IPersonsAdderService _personsAdderService;
+        private readonly IPersonsUpdaterService _personsUpdaterService;
+        private readonly IPersonsDeleterService _personsDeleterService;
+        private readonly IPersonsSorterService _personsSorterService;
 
         private readonly Mock<IpersonsRepository> _personsRepositoryMock;
-        private readonly IpersonsRepository _peronsRepository;        
+        private readonly IpersonsRepository _personsRepository;        
 
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly IFixture _fixture;
@@ -38,12 +39,20 @@ namespace CDMTests
         {
             _fixture = new Fixture();
             _personsRepositoryMock = new Mock<IpersonsRepository>();
-            _peronsRepository = _personsRepositoryMock.Object;
+            _personsRepository = _personsRepositoryMock.Object;
             var diagnosticContextMock = new Mock<IDiagnosticContext>();
             var loggerMock = new Mock<ILogger<PersonsSorterService>>();
             
 
-            _personService = new PersonsService(_peronsRepository, loggerMock.Object ,diagnosticContextMock.Object);
+            _personsGetterService = new PersonsGetterService(_personsRepository, loggerMock.Object ,diagnosticContextMock.Object);
+
+            _personsAdderService = new PersonsAdderService(_personsRepository, loggerMock.Object, diagnosticContextMock.Object);
+
+            _personsDeleterService = new PersonsDeleterService(_personsRepository, loggerMock.Object, diagnosticContextMock.Object);
+
+            _personsSorterService = new PersonsSorterService(_personsRepository, loggerMock.Object, diagnosticContextMock.Object);
+
+            _personsUpdaterService = new PersonsUpdaterService(_personsRepository, loggerMock.Object, diagnosticContextMock.Object);
 
             _testOutputHelper = testOutputHelper;
         }
@@ -60,7 +69,7 @@ namespace CDMTests
             //Act
            Func<Task> action = async () =>
             {
-               await _personService.AddPerson(personAddRequest);
+               await _personsAdderService.AddPerson(personAddRequest);
             };
             //Assert
             await action.Should().ThrowAsync<ArgumentNullException>();
@@ -82,7 +91,7 @@ namespace CDMTests
             //Act
             Func<Task> action = async () =>
             {
-                await _personService.AddPerson(personAddRequest);
+                await _personsAdderService.AddPerson(personAddRequest);
             };
             //Assert
             await action.Should().ThrowAsync<ArgumentException>();
@@ -103,7 +112,7 @@ namespace CDMTests
             _personsRepositoryMock.Setup(temp => temp.AddPerson(It.IsAny<Person>())).ReturnsAsync(person);
 
             //Act
-            PersonResponse person_response_from_add = await _personService.AddPerson(personAddRequest);
+            PersonResponse person_response_from_add = await _personsAdderService.AddPerson(personAddRequest);
             person_response_expected.PersonID = person_response_from_add.PersonID;
 
             
@@ -123,7 +132,7 @@ namespace CDMTests
             Guid? personID = null;
 
             //Act
-            PersonResponse? person_response_from_get = await _personService.GetPersonByPersonID(personID);
+            PersonResponse? person_response_from_get = await _personsGetterService.GetPersonByPersonID(personID);
 
             //Assert
             person_response_from_get.Should().BeNull();
@@ -145,7 +154,7 @@ namespace CDMTests
 
 
             //Act           
-            PersonResponse? person_response_from_get = await _personService.GetPersonByPersonID(person.PersonID);
+            PersonResponse? person_response_from_get = await _personsGetterService.GetPersonByPersonID(person.PersonID);
 
             //Assert
             //Assert.Equal(person_response_expected, person_response_from_get);
@@ -165,7 +174,7 @@ namespace CDMTests
             _personsRepositoryMock.Setup(temp => temp.GetAllPersons()).ReturnsAsync(persons);
             
             //Act
-            List<PersonResponse> person_from_get = await _personService.GetAllPersons();
+            List<PersonResponse> person_from_get = await _personsGetterService.GetAllPersons();
 
             //Assert
             //Assert.Empty(person_from_get);
@@ -197,7 +206,7 @@ namespace CDMTests
             _personsRepositoryMock.Setup(temp => temp.GetAllPersons()).ReturnsAsync(persons);
 
             //Act
-            List<PersonResponse> persons_list_from_get  = await _personService.GetAllPersons();
+            List<PersonResponse> persons_list_from_get  = await _personsGetterService.GetAllPersons();
 
             //print person_response_list_from_get
             _testOutputHelper.WriteLine("Actual:");
@@ -242,7 +251,7 @@ namespace CDMTests
             _personsRepositoryMock.Setup(temp => temp.GetFilteredPersons(It.IsAny<Expression<Func<Person, bool>>>())).ReturnsAsync(persons);
 
             //Act
-            List<PersonResponse> persons_list_from_search = await _personService.GetFilteredPersons(nameof(Person.PersonName), "");
+            List<PersonResponse> persons_list_from_search = await _personsGetterService.GetFilteredPersons(nameof(Person.PersonName), "");
 
             //print person_response_list_from_get
             _testOutputHelper.WriteLine("Actual:");
@@ -283,7 +292,7 @@ namespace CDMTests
             _personsRepositoryMock.Setup(temp => temp.GetFilteredPersons(It.IsAny<Expression<Func<Person, bool>>>())).ReturnsAsync(persons);
 
             //Act
-            List<PersonResponse> persons_list_from_search = await _personService.GetFilteredPersons(nameof(Person.PersonName), "sa");
+            List<PersonResponse> persons_list_from_search = await _personsGetterService.GetFilteredPersons(nameof(Person.PersonName), "sa");
 
             //print person_response_list_from_get
             _testOutputHelper.WriteLine("Actual:");
@@ -326,10 +335,10 @@ namespace CDMTests
                 _testOutputHelper.WriteLine(person_response_from_add.ToString());
             }
 
-            List<PersonResponse> allPersons = await _personService.GetAllPersons();
+            List<PersonResponse> allPersons = await _personsGetterService.GetAllPersons();
 
             //Act
-            List<PersonResponse> persons_list_from_sort = await _personService.GetSortedPersons(allPersons, nameof(Person.PersonName), SortOrderOptions.DESC);
+            List<PersonResponse> persons_list_from_sort = await _personsSorterService.GetSortedPersons(allPersons, nameof(Person.PersonName), SortOrderOptions.DESC);
 
             //print person_response_list_from_get
             _testOutputHelper.WriteLine("Actual:");
@@ -361,7 +370,7 @@ namespace CDMTests
             //Act
            Func<Task> action = async () =>
             {
-                await _personService.UpdatePerson(person_update_request);
+                await _personsUpdaterService.UpdatePerson(person_update_request);
             };
             //Assert
             await action.Should().ThrowAsync<ArgumentNullException>();
@@ -377,7 +386,7 @@ namespace CDMTests
             //Assert
             Func<Task> action = async () =>
             {
-                await _personService.UpdatePerson(person_update_request);
+                await _personsUpdaterService.UpdatePerson(person_update_request);
             };
             await action.Should().ThrowAsync<ArgumentException>();
         }
@@ -402,7 +411,7 @@ namespace CDMTests
             //Act
             var action = async () =>
             {
-               await _personService.UpdatePerson(person_update_request);
+               await _personsUpdaterService.UpdatePerson(person_update_request);
             };
             //Assert
             await action.Should().ThrowAsync<ArgumentException>();
@@ -433,7 +442,7 @@ namespace CDMTests
 
 
             //Act
-            PersonResponse person_response_from_update = await _personService.UpdatePerson(person_update_request);            
+            PersonResponse person_response_from_update = await _personsUpdaterService.UpdatePerson(person_update_request);            
 
             //Assert
             //Assert.Equal(person_response_from_get, person_response_from_update);
@@ -464,7 +473,7 @@ namespace CDMTests
             _personsRepositoryMock.Setup(temp => temp.GetPersonByPersonID(It.IsAny<Guid>())).ReturnsAsync(person);
 
             //Act
-            bool isDeleted = await _personService.DeletePerson(person.PersonID);
+            bool isDeleted = await _personsDeleterService.DeletePerson(person.PersonID);
 
             //Assert
             //Assert.True(isDeleted);
@@ -476,7 +485,7 @@ namespace CDMTests
         public async Task DeletePerson_InvalidPersonID()
         {
             //Act
-            bool isDeleted = await _personService.DeletePerson(Guid.NewGuid());
+            bool isDeleted = await _personsDeleterService.DeletePerson(Guid.NewGuid());
 
             //Assert
             //Assert.False(isDeleted);
