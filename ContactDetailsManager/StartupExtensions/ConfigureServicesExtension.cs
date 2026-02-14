@@ -36,7 +36,7 @@ namespace ContactDetailsManager
             services.AddScoped<IpersonsRepository, PersonsRepository>();
 
             services.AddScoped<ICountriesService, CountriesService>();
-            services.AddScoped<IPersonsService, PersonsService>();
+            services.AddScoped<IPersonsGetterService, PersonsSorterService>();
 
                
 

@@ -25,7 +25,7 @@ namespace CDMTests
     public class PersonsServiceTest
     {
         //private field
-        private readonly IPersonsService _personService;        
+        private readonly IPersonsGetterService _personService;        
 
         private readonly Mock<IpersonsRepository> _personsRepositoryMock;
         private readonly IpersonsRepository _peronsRepository;        
@@ -40,7 +40,7 @@ namespace CDMTests
             _personsRepositoryMock = new Mock<IpersonsRepository>();
             _peronsRepository = _personsRepositoryMock.Object;
             var diagnosticContextMock = new Mock<IDiagnosticContext>();
-            var loggerMock = new Mock<ILogger<PersonsService>>();
+            var loggerMock = new Mock<ILogger<PersonsSorterService>>();
             
 
             _personService = new PersonsService(_peronsRepository, loggerMock.Object ,diagnosticContextMock.Object);

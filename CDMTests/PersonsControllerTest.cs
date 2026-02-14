@@ -20,11 +20,11 @@ namespace CDMTests
     public class PersonsControllerTest
     {
         private readonly ICountriesService _countriesServie;
-        private readonly IPersonsService _personsService;
+        private readonly IPersonsGetterService _personsService;
         private readonly ILogger<PersonsController> _logger;
 
         private readonly Mock<ICountriesService> _countiresServiceMock;
-        private readonly Mock<IPersonsService> _personsServiceMock;
+        private readonly Mock<IPersonsGetterService> _personsServiceMock;
 
         private readonly Fixture _fixture;
         private readonly Mock<ILogger<PersonsController>> _loggerMock;
@@ -35,7 +35,7 @@ namespace CDMTests
             _fixture = new Fixture();
 
             _countiresServiceMock = new Mock<ICountriesService>();
-            _personsServiceMock = new Mock<IPersonsService>();
+            _personsServiceMock = new Mock<IPersonsGetterService>();
             _loggerMock = new Mock<ILogger<PersonsController>>();
 
             _countriesServie = _countiresServiceMock.Object;
