@@ -1,5 +1,7 @@
 ﻿using ContactDetailsManager.Controllers;
+using ContactsDetailsManager.Core.Domain.IdentityEntities;
 using ContactsDetailsManager.Core.DTO;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsDetailsManager.UI.Controllers
@@ -7,6 +9,15 @@ namespace ContactsDetailsManager.UI.Controllers
     [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+        {
+            _userManager = userManager;
+            _signInManager = signInManager;
+        }
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -14,11 +25,32 @@ namespace ContactsDetailsManager.UI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(RegisterDTO registerDTO)
+        public async Task<IActionResult> Register(RegisterDTO registerDTO)
         {
+            if(ModelState.IsValid == false)
+            {
+                ViewBag.Errors = ModelState.Values.SelectMany(temp => temp.Errors).Select(temp => temp.ErrorMessage);
+                return View(registerDTO);
+            }
+            ApplicationUser user = new ApplicationUser() { Email = registerDTO.Email, PhoneNumber = registerDTO.Phone, UserName = registerDTO.Email, PersonName = registerDTO.PersonName };
 
-            //TO DO: Store user registration details into Identity database
-            return RedirectToAction(nameof(PersonsController.Index), "persons");
+            IdentityResult result = await _userManager.CreateAsync(user, registerDTO.Password);
+
+            if (result.Succeeded)
+            {
+                //Sign in
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                return RedirectToAction(nameof(PersonsController.Index), "Persons");
+            }
+            else
+            {
+                foreach(IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError("Register", error.Description);
+                }
+                return View(registerDTO);
+            }
         }
     }
 }

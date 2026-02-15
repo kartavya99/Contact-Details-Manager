@@ -1,5 +1,8 @@
 ﻿using ContactDetailsManager.Filters.ActionFilters;
+using ContactsDetailsManager.Core.Domain.IdentityEntities;
 using Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RepositoryContarcts;
 using Respostiories;
@@ -53,7 +56,17 @@ namespace ContactDetailsManager
             {
                 services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-            }          
+            }
+
+            services.AddTransient<PersonsListActionFilter>();
+
+            //Enable Identity in this project
+            services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders()
+                .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
+                .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
+                
+
 
             // Data Source=(localdb)\ProjectModels;Initial Catalog=PersonsDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
 
