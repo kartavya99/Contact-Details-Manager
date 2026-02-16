@@ -1,6 +1,7 @@
 ﻿using ContactDetailsManager.Filters.ActionFilters;
 using ContactsDetailsManager.Core.Domain.IdentityEntities;
 using Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +50,7 @@ namespace ContactDetailsManager
             services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
             services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
             services.AddScoped<IPersonsSorterService, PersonsSorterService>();
-
+            services.AddTransient<PersonsListActionFilter>();
 
 
             if (!env.IsEnvironment("Test"))
@@ -58,7 +59,6 @@ namespace ContactDetailsManager
                     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
             }
 
-            services.AddTransient<PersonsListActionFilter>();
 
             //Enable Identity in this project
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
@@ -74,8 +74,17 @@ namespace ContactDetailsManager
                 .AddDefaultTokenProviders()
                 .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
                 .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
-                
 
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                // enforces authorization policy (user must be authenticated ) for all the action methods
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+            });
 
             // Data Source=(localdb)\ProjectModels;Initial Catalog=PersonsDatabase;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False
 
