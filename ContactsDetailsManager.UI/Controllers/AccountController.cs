@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ContactsDetailsManager.UI.Controllers
 {
     [Route("[controller]/[action]")]
-    [AllowAnonymous]
+    //[AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -24,12 +24,14 @@ namespace ContactsDetailsManager.UI.Controllers
         }
 
         [HttpGet]
+        [Authorize("NotAuthorized")]
         public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize("NotAuthorized")]
         public async Task<IActionResult> Register(RegisterDTO registerDTO)
         {
             if(ModelState.IsValid == false)
@@ -47,7 +49,7 @@ namespace ContactsDetailsManager.UI.Controllers
                 if(registerDTO.UserType == Core.Enums.UserTypeOptions.Admin)
                 {
                     //Cereat "Admin" role
-                    if (await _roleManager.FindByIdAsync(UserTypeOptions.Admin.ToString()) is null)
+                    if (await _roleManager.FindByNameAsync(UserTypeOptions.Admin.ToString()) is null)
                     {
                         ApplicationRole applicationRole = new ApplicationRole() { Name = UserTypeOptions.Admin.ToString() };
                         await _roleManager.CreateAsync(applicationRole);
@@ -78,12 +80,14 @@ namespace ContactsDetailsManager.UI.Controllers
         }
 
         [HttpGet]
+        [Authorize("NotAuthorized")]
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
+        [Authorize("NotAuthorized")]
         public async Task<IActionResult> Login(LoginDTO loginDTO, string? ReturnUrl)
         {
             if(!ModelState.IsValid)
@@ -96,6 +100,15 @@ namespace ContactsDetailsManager.UI.Controllers
 
             if (result.Succeeded)
             {
+                //Admin
+                ApplicationUser user = await _userManager.FindByEmailAsync(loginDTO.Email);
+                if (user != null)
+                {
+                    if(await _userManager.IsInRoleAsync(user, UserTypeOptions.Admin.ToString()))
+                    {
+                        return RedirectToAction("Index", "Home", new { area = "Admin" });
+                    }
+                }
                 if(!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
                 {
                     return LocalRedirect(ReturnUrl);
@@ -114,6 +127,7 @@ namespace ContactsDetailsManager.UI.Controllers
             
         }
 
+        [Authorize]
         public async Task<IActionResult> IsEmailAlreadyRegistered(string email)
         {
             ApplicationUser user = await _userManager.FindByEmailAsync(email);

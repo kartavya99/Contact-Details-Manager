@@ -36,6 +36,9 @@ else
     app.UseExceptionHandlingMiddleware();
 }
 
+app.UseHsts();
+app.UseHttpsRedirection();
+
 app.UseHttpLogging();
 
 //app.Logger.LogDebug("debug-message");
@@ -55,6 +58,10 @@ app.UseRouting(); // Identifying action method based route
 app.UseAuthentication(); // Reading Identity cookie
 app.UseAuthorization(); // Validates access permission of the users
 app.MapControllers(); // Execute the filter pipeline (action + filters)
+
+app.MapControllerRoute(
+ name: "areas",
+ pattern: "{area:exists}/{controller=Home}/{action=Index}");
 
 app.Run();
 
