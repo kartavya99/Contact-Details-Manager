@@ -5,10 +5,10 @@ An ASP.NET Core MVC application for managing contacts, built on Clean Architectu
 ## Features
 
 - Create, view, edit and delete contacts
-- [Search and filter by name, email, country — confirm]
-- [Sorting on any column — confirm]
-- [Export to PDF / CSV / Excel — if present]
-- [Authentication and roles via ASP.NET Core Identity — if present]
+- Search and filter by name, email, country
+- Sorting on any column
+- Export to PDF / CSV / Excel
+- Authentication and roles via ASP.NET Core Identity
 
 ## Architecture
 
